@@ -14,7 +14,7 @@ app.use(express.static('doctors'));
 app.use(fileUpload());
 
 app.get('/', (req, res) => {
-    res.send('Hi...It Video Formation Server!')
+    res.send('It Video Formation Server!')
 })
 
 
