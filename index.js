@@ -27,6 +27,8 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 client.connect(err => {
     const servicesCollection = client.db("videoFormation").collection("services");
     const reviewsCollection = client.db("videoFormation").collection("reviews");
+    const bookingCollection = client.db("videoFormation").collection("bookings");
+    const adminCollection = client.db("videoFormation").collection("adminEmail");
     //review post
     app.post('/addReview', (req, res) => {
         const review = req.body;
@@ -80,6 +82,44 @@ client.connect(err => {
         servicesCollection.deleteOne({ _id: ObjectId(req.params.id) })
             .then((result) => {
                 res.send(result.deletedCount > 0)
+            })
+    })
+    //booking post
+    app.post('/bookingOrder', (req, res) => {
+        const newBooking = req.body;
+        bookingCollection.insertOne(newBooking)
+            .then(result => {
+                res.send(result.insertedCount > 0);
+            })
+    })
+    //booking post read by email
+    app.get('/bookingList', (req, res) => {
+        bookingCollection.find({ email: req.query.email })
+            .toArray((err, document) => {
+                res.send(document)
+            })
+    })
+    //total orders get
+    app.get('/totalOrders', (req, res) => {
+        bookingCollection.find()
+            .toArray((err, document) => {
+                res.send(document)
+            })
+    })
+    //post admin email
+    app.post('/addAdmin', (req, res) => {
+        const newAdmin = req.body;
+        adminCollection.insertOne(newAdmin)
+            .then(result => {
+                res.send(result.insertedCount > 0)
+            })
+    });
+    //isAdmin check
+    app.post('/isAdmin', (req, res) => {
+        const email = req.body.email;
+        adminCollection.find({email: email})
+            .toArray((err, admin) =>{
+                res.send(admin.length > 0)
             })
     })
 });
