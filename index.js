@@ -106,6 +106,24 @@ client.connect(err => {
                 res.send(document)
             })
     })
+    //booking get for update
+    app.get('/updateBooking/:id', (req,res) =>{
+        bookingCollection.find({_id: ObjectId(req.params.id)})
+            .toArray((err, document) => {
+                res.send(document[0])
+            })
+    })
+    //booking patch for status
+    app.patch('/updateStatus/:id', (req, res) => {
+        bookingCollection.updateOne({ _id: ObjectId(req.params.id) },
+        {
+            $set: {status: req.body.status}
+        })
+            .then((result) => {
+                res.send(result.modifiedCount > 0)
+            })
+    })
+
     //post admin email
     app.post('/addAdmin', (req, res) => {
         const newAdmin = req.body;
